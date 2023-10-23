@@ -28,4 +28,41 @@ class Person(models.Model):
 
 
 
+class Stanowisko(models.Model):
+    nazwa = models.TextField(blank=False, null=False)
+    opis = models.TextField(blank = True, null= True)
+
+
+    def __str__(self):
+        return f"{self.nazwa}"
+
+    class Meta:
+        db_table = "Stanowisko"
+class Osoba(models.Model):
+
+
+    imie = models.TextField(blank=False, null=False)
+    nazwisko = models.TextField(blank=False, null=False)
+
+    class Plec(models.IntegerChoices):
+        MEZCZYZNA = 1
+        KOBIETA = 2
+        INNE = 3
+
+    plec_choices = models.IntegerChoices("plec", "MEZCZYZNA KOBIETA INNE")
+    plec = models.IntegerField(choices=plec_choices.choices)
+    stanowisko = models.ForeignKey(Stanowisko, on_delete=models.CASCADE)
+    data_dodania = models.DateField(auto_now=True, editable=False)
+
+    def __str__(self):
+        return f"{self.imie} {self.nazwisko}"
+
+    class Meta:
+        db_table = "Osoba"
+        ordering = ('nazwisko',)
+
+
+
+
+
 
