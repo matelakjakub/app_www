@@ -52,7 +52,7 @@ class Osoba(models.Model):
     plec_choices = models.IntegerChoices("plec", "MEZCZYZNA KOBIETA INNE")
     plec = models.IntegerField(choices=plec_choices.choices)
     stanowisko = models.ForeignKey(Stanowisko, on_delete=models.CASCADE)
-    data_dodania = models.DateField(auto_now=True, editable=False)
+    data_dodania = models.DateField(auto_now_add=True, editable=False)
 
     def __str__(self):
         return f"{self.imie} {self.nazwisko}"
