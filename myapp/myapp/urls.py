@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
     path('ankiety/', include ('application.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 
 ]

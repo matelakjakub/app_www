@@ -53,9 +53,18 @@ class Osoba(models.Model):
     plec = models.IntegerField(choices=plec_choices.choices)
     stanowisko = models.ForeignKey(Stanowisko, on_delete=models.CASCADE)
     data_dodania = models.DateField(auto_now_add=True, editable=False)
+    wlasciciel = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+
 
     def __str__(self):
         return f"{self.imie} {self.nazwisko}"
+
+    class Meta:
+        # Ogranicz dostęp do rekordów tylko dla właścicieli
+        permissions = [
+            ("view_osoba", "Can view osoba owned by user"),
+        ]
 
     class Meta:
         db_table = "Osoba"
