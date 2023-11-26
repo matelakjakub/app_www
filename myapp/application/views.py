@@ -8,6 +8,9 @@ from .models import Osoba
 from .models import Stanowisko
 from .serializers import OsobaSerializer
 from .serializers import StanowiskoSerializer
+from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 
 
 
@@ -139,3 +142,28 @@ def stanowisko_members(request, pk):
         return Response(serializer.data)
     except Stanowisko.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+# Dekorator sprawdzający uprawnienie
+def has_view_osoba_permission(user):
+    return user.has_perm('myapp.view_osoba')
+
+def can_view_other_persons(user):
+    return user.has_perm('myapp.can_view_other_persons')
+
+# Prosty widok
+@user_passes_test(lambda u: has_view_osoba_permission(u) or can_view_other_persons(u))
+def osoba_view(request):
+    try:
+        if can_view_other_persons(request.user):
+            # Użytkownik ma uprawnienie do przeglądania innych osób
+            osoby = Osoba.objects.all()
+        else:
+            # Użytkownik może przeglądać tylko swoje osoby
+            osoby = Osoba.objects.filter(wlasciciel=request.user)
+
+        # Tworzymy odpowiedź HttpResponse z danymi
+        response_data = "\n".join([f"{osoba.imie} {osoba.nazwisko}" for osoba in osoby])
+        return HttpResponse(response_data)
+    except Osoba.DoesNotExist:
+        return HttpResponse("Brak danych dla tego użytkownika.")

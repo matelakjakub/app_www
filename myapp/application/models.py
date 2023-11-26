@@ -64,6 +64,7 @@ class Osoba(models.Model):
         # Ogranicz dostęp do rekordów tylko dla właścicieli
         permissions = [
             ("view_osoba", "Can view osoba owned by user"),
+            ("can_view_other_persons", "Can view other persons"),
         ]
 
     class Meta:
